@@ -16,6 +16,14 @@ public class Piece {
 	public String getName() {
 		return name;
 	}
+	
+	public String getColor() {
+		if (isWhite) {
+			return "White";
+		} else {
+			return "Black";
+		}
+	}
 }
 	
 
@@ -30,5 +38,29 @@ class Pawn extends Piece {
 class Knight extends Piece {
 	public Knight(boolean isWhite, int rowCoord, int colCoord) {
 		super("Knight", isWhite, rowCoord, colCoord);
+	}
+}
+
+class Bishop extends Piece {
+	public Bishop(boolean isWhite, int rowCoord, int colCoord) {
+		super("Bishop", isWhite, rowCoord, colCoord);
+	}
+}
+
+class Rook extends Piece {
+	public Rook(boolean isWhite, int rowCoord, int colCoord) {
+		super("Rook", isWhite, rowCoord, colCoord);
+	}
+}
+
+class Queen extends Piece {
+	public Queen(boolean isWhite, int rowCoord, int colCoord) {
+		super("Queen", isWhite, rowCoord, colCoord);
+	}
+}
+
+class King extends Piece {
+	public King(boolean isWhite, int rowCoord, int colCoord) {
+		super("King", isWhite, rowCoord, colCoord);
 	}
 }

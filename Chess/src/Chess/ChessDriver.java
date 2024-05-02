@@ -6,6 +6,7 @@ public class ChessDriver {
 		ChessBoard myBoard = new ChessBoard();
 		
 		myBoard.printBoard();
+		myBoard.displayBoard();
 
 	}
 
