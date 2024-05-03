@@ -24,6 +24,14 @@ public class Piece {
 			return "Black";
 		}
 	}
+	
+	public void setRow(int row) {
+		this.rowCoord = row;
+	}
+	
+	public void setCol(int col) {
+		this.colCoord = col;
+	}
 }
 	
 

@@ -53,8 +53,8 @@ public class Tile {
 		updateIcon();
 	}
 	
-	public String getPiece(){
-		return pieceInTile.getName();
+	public Piece getPiece(){
+		return pieceInTile;
 	}
 	
 	public void setColor(boolean isWhite) {
