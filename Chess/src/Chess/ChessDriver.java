@@ -7,8 +7,6 @@ public class ChessDriver {
 		
 		myBoard.printBoard();
 		myBoard.displayBoard();
-		myBoard.movePiece(0, 0, 2, 0);
-		myBoard.displayBoard();
 
 	}
 

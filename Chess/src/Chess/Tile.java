@@ -1,5 +1,8 @@
 package Chess;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 public class Tile {
@@ -8,11 +11,16 @@ public class Tile {
 	private boolean occupied;
 	private Piece pieceInTile = null;
 	private Icon tileIcon;
+	private JButton tileButton;
+	private int rowCoord;
+	private int colCoord;
 	
-	public Tile (boolean isWhite, boolean isOccupied, Piece pieceInTile) {
+	public Tile (boolean isWhite, boolean isOccupied, Piece pieceInTile, int rowCoord, int colCoord) {
 		this.isWhite = isWhite;
 		this.occupied = isOccupied;
 		this.pieceInTile = pieceInTile;
+		this.rowCoord = rowCoord;
+		this.colCoord = colCoord;
 		
 		if (isWhite) {
 			color = "White";
@@ -21,7 +29,50 @@ public class Tile {
 		}
 		
 		updateIcon();
-		
+				
+	}
+	
+	public void setActions() {
+		tileButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				/*
+				if (occupied) {
+					System.out.println("" + getColor() + " " + getPiece().getColor() + getPiece().getName());
+				} else {
+					System.out.println("" + getColor() + " No piece");
+				}
+				*/
+				if (ChessBoard.getCurrClicked() == null) {
+					ChessBoard.setCurrClickedTile(rowCoord, colCoord);
+					if (!ChessBoard.getCurrClicked().isOccupied()) {
+						ChessBoard.setCurrClickedTile(-1, -1);
+					}
+					System.out.println("hi");
+				} else {
+					System.out.println("hello");
+					Tile t = ChessBoard.getCurrClicked();
+					ChessBoard.movePiece(t.getRowCoord(), t.getColCoord(), rowCoord, colCoord);
+					ChessBoard.setCurrClickedTile(-1, -1);
+					System.out.println(ChessBoard.getCurrClicked() == null);
+				}
+			}
+		});
+	}
+
+	public int getRowCoord() {
+		return rowCoord;
+	}
+	
+	public void setRowCoord(int row) {
+		this.rowCoord = row;
+	}
+	
+	public int getColCoord() {
+		return colCoord;
+	}
+	
+	public void setColCoord(int col) {
+		this.colCoord = col;
 	}
 	
 	public Icon getIcon() {
@@ -38,7 +89,13 @@ public class Tile {
 		Image newImg = img.getScaledInstance(100,100,java.awt.Image.SCALE_SMOOTH);
 		tileIcon = new ImageIcon(newImg);
 		
+		tileButton = new JButton(tileIcon);
+		tileButton.setPreferredSize(new Dimension(500,10));
 		
+	}
+	
+	public JButton getButton() {
+		return tileButton;
 	}
 
 	public void addPiece(Piece p) {

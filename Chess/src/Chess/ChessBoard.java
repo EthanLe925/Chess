@@ -1,27 +1,41 @@
 package Chess;
 import java.awt.*;
+import java.awt.event.*;
+
 import javax.swing.*;
 
-public class ChessBoard {
-	private Tile[][] board = new Tile[8][8];
+public class ChessBoard{
+	private static Tile[][] board = new Tile[8][8];
+	private static Tile tileCurrClicked = null;
 	
 	public ChessBoard() {
 		
 		initializeBoard();
 		setBeginningPieces();
+		for (int row = board.length-1; row >= 0; row--) {
+			for (int col = 0; col < board[row].length; col++) {		
+				board[row][col].setActions();
+			}
+		}
+		
 		
 	}
 	
-	public void printBoard() {
+	public static void printBoard() {
 		for (int row = 0; row < board.length; row++) {
 			for (int col = 0; col < board.length; col++) {
-				System.out.print(board[row][col].getColor());
+				if (board[row][col].isOccupied()) {
+					System.out.print(board[row][col].getPiece().getName());
+				} else {
+					System.out.print("null");
+				}
 			}
+			//hi
 			System.out.println();
 		}
 	}
 	
-	public void displayBoard() {
+	public static void displayBoard() {
 		JPanel chessBoard = new JPanel();
 		chessBoard.setPreferredSize(new Dimension(2000, 2000));
 		 
@@ -30,15 +44,19 @@ public class ChessBoard {
 		
 		for (int row = board.length-1; row >= 0; row--) {
 			for (int col = 0; col < board[row].length; col++) {		
-				JButton button = new JButton(board[row][col].getIcon());
-				button.setPreferredSize(new Dimension(500,10));
-				chessBoard.add(button, row, col);
+				chessBoard.add(board[row][col].getButton(), row, col);
 			}
 		}
 		
 		JPanel scoreBoard = new JPanel();
 		scoreBoard.setPreferredSize(new Dimension(500, 100));
-		scoreBoard.add(new JButton("Hello"));
+		JButton helloButton = new JButton("Hello");
+		helloButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("hi");
+			}
+		});
+		scoreBoard.add(helloButton);
 
 		JFrame frame = new JFrame("Test Frame");
 		frame.setSize(2000,1000);
@@ -51,7 +69,8 @@ public class ChessBoard {
 		
 	}
 	
-	public void movePiece(int initRow, int initCol, int toRow, int toCol) {
+	
+	public static void movePiece(int initRow, int initCol, int toRow, int toCol) {
 		Tile toTile = board[toRow][toCol];
 		Tile initTile = board[initRow][initCol];
 		
@@ -61,6 +80,11 @@ public class ChessBoard {
 		
 		toTile.addPiece(board[initRow][initCol].getPiece());
 		initTile.removePiece();
+		printBoard();
+		displayBoard();
+		toTile.setActions();
+		initTile.setActions();
+
 	}
 	
 	private void setBeginningPieces() {
@@ -98,21 +122,38 @@ public class ChessBoard {
 			if (row % 2 == 0) {
 				for (int col = 0; col < board[row].length; col++) {
 					if(col % 2 == 0) {
-						board[row][col] = new Tile(true, false, null);
+						board[row][col] = new Tile(true, false, null, row, col);
 					} else {
-						board[row][col] = new Tile(false, false, null);
+						board[row][col] = new Tile(false, false, null, row, col);
 					}
 				}
 			} else {
 				for (int col = 0; col < board[row].length; col++) {
 					if (col % 2 == 1) {
-						board[row][col] = new Tile(true, false, null);
+						board[row][col] = new Tile(true, false, null, row, col);
 					} else {
-						board[row][col] = new Tile(false, false, null);
+						board[row][col] = new Tile(false, false, null, row, col);
 					}
 				}
 			}
 		}
+	}
+	
+	public static void setCurrClickedTile(int row, int col) {
+		if (row != -1) {
+			tileCurrClicked = board[row][col];
+		} else {
+			tileCurrClicked = null;
+		}
+		
+	}
+	
+	public static boolean tileCurrClicked() {
+		return tileCurrClicked == null;
+	}
+	
+	public static Tile getCurrClicked() {
+		return tileCurrClicked;
 	}
 	
 	
