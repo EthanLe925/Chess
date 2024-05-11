@@ -21,6 +21,10 @@ public class ChessBoard{
 		
 	}
 	
+	public static Tile[][] getBoard(){
+		return board;
+	}
+	
 	public static void printBoard() {
 		for (int row = 0; row < board.length; row++) {
 			for (int col = 0; col < board.length; col++) {
@@ -30,7 +34,7 @@ public class ChessBoard{
 					System.out.print("null");
 				}
 			}
-			//hi
+
 			System.out.println();
 		}
 	}
@@ -83,6 +87,9 @@ public class ChessBoard{
 		printBoard();
 		displayBoard();
 		toTile.setActions();
+		toTile.getPiece().setRow(toTile.getRowCoord());
+		toTile.getPiece().setCol(toTile.getColCoord());
+		toTile.getPiece().setHasMoved(true);
 		initTile.setActions();
 
 	}
@@ -91,7 +98,7 @@ public class ChessBoard{
 		
 		for (int col = 0; col < board[0].length; col++) {
 			board[1][col].addPiece(new Pawn(false, 1, col));
-			board[6][col].addPiece(new Pawn(true, 1, col));
+			board[6][col].addPiece(new Pawn(true, 6, col));
 		}	
 		
 		board[0][0].addPiece(new Rook(false, 0, 0));

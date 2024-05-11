@@ -2,6 +2,7 @@ package Chess;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -47,16 +48,34 @@ public class Tile {
 					if (!ChessBoard.getCurrClicked().isOccupied()) {
 						ChessBoard.setCurrClickedTile(-1, -1);
 					}
-					System.out.println("hi");
+					System.out.println(ChessBoard.getCurrClicked().getPiece().getMoves());
 				} else {
 					System.out.println("hello");
 					Tile t = ChessBoard.getCurrClicked();
-					ChessBoard.movePiece(t.getRowCoord(), t.getColCoord(), rowCoord, colCoord);
+					if (t != Tile.this && isPossibleTile(t.getPiece())) {
+						ChessBoard.movePiece(t.getRowCoord(), t.getColCoord(), rowCoord, colCoord);
+					}
+					//ChessBoard.movePiece(t.getRowCoord(), t.getColCoord(), rowCoord, colCoord);
 					ChessBoard.setCurrClickedTile(-1, -1);
-					System.out.println(ChessBoard.getCurrClicked() == null);
+					//System.out.println(ChessBoard.getCurrClicked() == null);
 				}
 			}
 		});
+	}
+	
+	public boolean isPossibleTile(Piece p) {
+		boolean result = false;
+		ArrayList<Coordinate> moves = p.getMoves();
+		Coordinate tileCoord = new Coordinate(getRowCoord(), getColCoord());
+		
+		for (int i = 0; i < moves.size(); i++) {
+			if (moves.get(i).equals(tileCoord)) {
+				result = true;
+			}
+		}
+		
+		return result;
+		
 	}
 
 	public int getRowCoord() {
