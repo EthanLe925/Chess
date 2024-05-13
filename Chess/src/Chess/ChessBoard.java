@@ -8,7 +8,7 @@ public class ChessBoard{
 	private static Tile[][] board = new Tile[8][8];
 	private static Tile tileCurrClicked = null;
 	
-	public ChessBoard() {
+	public static void setUpBoard() {
 		
 		initializeBoard();
 		setBeginningPieces();
@@ -94,7 +94,7 @@ public class ChessBoard{
 
 	}
 	
-	private void setBeginningPieces() {
+	private static void setBeginningPieces() {
 		
 		for (int col = 0; col < board[0].length; col++) {
 			board[1][col].addPiece(new Pawn(false, 1, col));
@@ -123,7 +123,7 @@ public class ChessBoard{
 		board[7][4].addPiece(new King(true, 7, 4));
 	}
 	
-	private void initializeBoard() {
+	private static void initializeBoard() {
 		
 		for (int row = 0; row < board.length; row++) {
 			if (row % 2 == 0) {

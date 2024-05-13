@@ -61,8 +61,66 @@ public class Piece {
 		return new ArrayList<Coordinate>();
 	}
 	
-	public ArrayList<Coordinate> getDiagonalCoords(){
-		return new ArrayList<Coordinate>();
+	public ArrayList<Coordinate> getDiagonalCoords(int rowAdder, int colAdder){
+		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
+		int currRow = getRow();
+		int currCol = getCol();
+		Tile[][] theBoard = ChessBoard.getBoard();
+		
+		if (!(currRow + rowAdder >= 0 && currCol + colAdder >= 0 && currRow + rowAdder < theBoard.length && currCol + colAdder < theBoard[0].length)) {
+			return result;
+		}
+		
+		currRow = currRow + rowAdder;
+		currCol = currCol + colAdder;
+		Tile nextTile = ChessBoard.getBoard()[currRow][currCol];
+		
+		while (!nextTile.isOccupied() && currRow + rowAdder >= 0 && currCol + colAdder >= 0 && currRow + rowAdder < theBoard.length && currCol + colAdder < theBoard[0].length) {
+			result.add(new Coordinate(currRow, currCol));
+			
+			currRow = currRow + rowAdder;
+			currCol = currCol + colAdder;
+			nextTile = ChessBoard.getBoard()[currRow][currCol];
+			
+		}
+		
+		result.add(new Coordinate(currRow, currCol));
+		
+		if (nextTile.isOccupied() && !nextTile.getPiece().getColor().equals(getColor())) {
+			result.add(new Coordinate(nextTile.getRowCoord(), nextTile.getColCoord()));
+		}
+		
+		return result;
+	}
+	
+	public ArrayList<Coordinate> filterCoordinates(ArrayList<Coordinate> list){
+		ArrayList<Coordinate> result = list;
+		Tile[][] theBoard = ChessBoard.getBoard();
+		
+		for (int i = result.size() - 1; i >= 0; i--) {
+			int currRow = result.get(i).getRowCoord();
+			int currCol = result.get(i).getColCoord();
+			
+			if (currRow >= theBoard.length || currRow < 0 || currCol >= theBoard[0].length || currCol < 0) {
+				result.remove(i);
+			}
+			
+		}
+		
+		for (int i = result.size() - 1; i >= 0; i--) {
+			int currRow = result.get(i).getRowCoord();
+			int currCol = result.get(i).getColCoord();
+			Tile currTile = ChessBoard.getBoard()[currRow][currCol];
+
+			if (currTile.isOccupied() && currTile.getPiece().getIsWhite() == getIsWhite()) {
+				result.remove(i);
+			}
+			
+		}
+		
+		
+		
+		return result;
 	}
 }
 	
@@ -78,7 +136,6 @@ class Pawn extends Piece {
 		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
 		int colorMultiplier;
 		ArrayList<Coordinate> diagonalCoords;
-		Tile[][] theBoard = ChessBoard.getBoard();
 		
 		if (getColor().equals("White")) {
 			colorMultiplier = -1;
@@ -98,11 +155,7 @@ class Pawn extends Piece {
 		
 		result.add(new Coordinate(getRow() + 1*colorMultiplier, getCol()));
 			
-		for (int i = result.size() - 1; i >= 0; i--) {
-			if (result.get(i).getRowCoord() >= theBoard.length || result.get(i).getRowCoord() < 0 || result.get(i).getColCoord() >= theBoard[0].length || result.get(i).getColCoord() < 0) {
-				result.remove(i);
-			}
-		}
+		result = filterCoordinates(result);
 		
 		return result;
 	}
@@ -110,19 +163,134 @@ class Pawn extends Piece {
 	public ArrayList<Coordinate> getDiagonalCoords(){
 		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
 		
-		result.add(new Coordinate(getCol() + 1, getRow() + 1));
-		result.add(new Coordinate(getCol() + 1, getRow() - 1));
-		result.add(new Coordinate(getCol() - 1, getRow() + 1));
-		result.add(new Coordinate(getCol() - 1, getRow() - 1));
+		result.add(new Coordinate(getRow() + 1, getCol() + 1));
+		result.add(new Coordinate(getRow() + 1, getCol() - 1));
+		result.add(new Coordinate(getRow() - 1, getCol() + 1));
+		result.add(new Coordinate(getRow() - 1, getCol() - 1));
+		
+		result = filterCoordinates(result);
 		
 		for (int i = result.size() - 1; i >= 0; i--) {
-			int rowCoord = result.get(i).getRowCoord();
-			int colCoord = result.get(i).getColCoord();
-					
-			if (rowCoord >= ChessBoard.getBoard().length || rowCoord < 0 ||colCoord >= ChessBoard.getBoard()[0].length || colCoord < 0) {
+			int currRow = result.get(i).getRowCoord();
+			int currCol = result.get(i).getColCoord();
+			Tile currTile = ChessBoard.getBoard()[currRow][currCol];
+			
+			if (!currTile.isOccupied() || currTile.isOccupied() && currTile.getPiece().getIsWhite() == getIsWhite()) {
 				result.remove(i);
 			}
 		}
+		
+		return result;
+	}
+	
+	
+	
+}
+
+class Knight extends Piece {
+	public Knight(boolean isWhite, int rowCoord, int colCoord) {
+		super("Knight", isWhite, rowCoord, colCoord);
+	}
+	
+	public ArrayList<Coordinate> getMoves(){
+		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
+
+		result.add(new Coordinate(getRow() + 2, getCol() + 1));
+		result.add(new Coordinate(getRow() + 2, getCol() - 1));
+		result.add(new Coordinate(getRow() - 2, getCol() + 1));
+		result.add(new Coordinate(getRow() - 2, getCol() - 1));
+		
+		result.add(new Coordinate(getRow() + 1, getCol() + 2));
+		result.add(new Coordinate(getRow() + 1, getCol() - 2));
+		result.add(new Coordinate(getRow() - 1, getCol() + 2));
+		result.add(new Coordinate(getRow() - 1, getCol() - 2));
+		
+		return filterCoordinates(result);
+	}
+	
+	
+}
+
+class Bishop extends Piece {
+	public Bishop(boolean isWhite, int rowCoord, int colCoord) {
+		super("Bishop", isWhite, rowCoord, colCoord);
+	}
+	
+	public ArrayList<Coordinate> getMoves(){
+		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
+		result.addAll(getDiagonalCoords(1, 1));
+		result.addAll(getDiagonalCoords(-1, -1));
+		result.addAll(getDiagonalCoords(-1, 1));
+		result.addAll(getDiagonalCoords(1, -1));
+		
+		return filterCoordinates(result);
+	}
+	
+}
+
+class Rook extends Piece {
+	public Rook(boolean isWhite, int rowCoord, int colCoord) {
+		super("Rook", isWhite, rowCoord, colCoord);
+	}
+	
+	public ArrayList<Coordinate> getMoves(){
+		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
+		result.addAll(getDiagonalCoords(0, 1));
+		result.addAll(getDiagonalCoords(1, 0));
+		result.addAll(getDiagonalCoords(-1, 0));
+		result.addAll(getDiagonalCoords(0, -1));
+		
+		return filterCoordinates(result);
+		 
+	}
+	
+}
+
+class Queen extends Piece {
+	public Queen(boolean isWhite, int rowCoord, int colCoord) {
+		super("Queen", isWhite, rowCoord, colCoord);
+	}
+	
+	public ArrayList<Coordinate> getMoves(){
+		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
+		result.addAll(getDiagonalCoords(0, 1));
+		result.addAll(getDiagonalCoords(1, 0));
+		result.addAll(getDiagonalCoords(-1, 0));
+		result.addAll(getDiagonalCoords(0, -1));
+		result.addAll(getDiagonalCoords(1, 1));
+		result.addAll(getDiagonalCoords(-1, -1));
+		result.addAll(getDiagonalCoords(-1, 1));
+		result.addAll(getDiagonalCoords(1, -1));
+		
+		return filterCoordinates(result);
+	}
+}
+
+class King extends Piece {
+	public King(boolean isWhite, int rowCoord, int colCoord) {
+		super("King", isWhite, rowCoord, colCoord);
+	}
+	public ArrayList<Coordinate> getMoves(){
+		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
+		result.addAll(getDiagonalCoords());
+		result.add(new Coordinate (getRow(), getCol() +1));
+		result.add(new Coordinate (getRow(), getCol() -1));
+		result.add(new Coordinate (getRow() + 1, getCol()));
+		result.add(new Coordinate (getRow() - 1, getCol()));
+		
+
+		return filterCoordinates(result);
+	}
+	
+	public ArrayList<Coordinate> getDiagonalCoords(){
+		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
+		
+		result.add(new Coordinate(getRow() + 1, getCol() + 1));
+		result.add(new Coordinate(getRow() + 1, getCol() - 1));
+		result.add(new Coordinate(getRow() - 1, getCol() + 1));
+		result.add(new Coordinate(getRow() - 1, getCol() - 1));
+		
+		result = filterCoordinates(result);
 		
 		for (int i = result.size() - 1; i >= 0; i--) {
 			int currRow = result.get(i).getRowCoord();
@@ -135,36 +303,5 @@ class Pawn extends Piece {
 		}
 		
 		return result;
-	}
-	
-}
-
-class Knight extends Piece {
-	public Knight(boolean isWhite, int rowCoord, int colCoord) {
-		super("Knight", isWhite, rowCoord, colCoord);
-	}
-}
-
-class Bishop extends Piece {
-	public Bishop(boolean isWhite, int rowCoord, int colCoord) {
-		super("Bishop", isWhite, rowCoord, colCoord);
-	}
-}
-
-class Rook extends Piece {
-	public Rook(boolean isWhite, int rowCoord, int colCoord) {
-		super("Rook", isWhite, rowCoord, colCoord);
-	}
-}
-
-class Queen extends Piece {
-	public Queen(boolean isWhite, int rowCoord, int colCoord) {
-		super("Queen", isWhite, rowCoord, colCoord);
-	}
-}
-
-class King extends Piece {
-	public King(boolean isWhite, int rowCoord, int colCoord) {
-		super("King", isWhite, rowCoord, colCoord);
 	}
 }

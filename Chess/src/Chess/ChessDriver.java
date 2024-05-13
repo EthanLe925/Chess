@@ -3,10 +3,9 @@ package Chess;
 public class ChessDriver {
 
 	public static void main(String[] args) {
-		ChessBoard myBoard = new ChessBoard();
-		
-		myBoard.printBoard();
-		myBoard.displayBoard();
+		ChessBoard.setUpBoard();
+		ChessBoard.printBoard();
+		ChessBoard.displayBoard();
 
 	}
 
