@@ -36,28 +36,23 @@ public class Tile {
 	public void setActions() {
 		tileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				/*
-				if (occupied) {
-					System.out.println("" + getColor() + " " + getPiece().getColor() + getPiece().getName());
-				} else {
-					System.out.println("" + getColor() + " No piece");
-				}
-				*/
+
 				if (ChessBoard.getCurrClicked() == null) {
 					ChessBoard.setCurrClickedTile(rowCoord, colCoord);
-					if (!ChessBoard.getCurrClicked().isOccupied()) {
+					
+					if (ChessBoard.getCurrClicked().isOccupied() && ChessBoard.getCurrClicked().getPiece().getIsWhite() != ChessBoard.getTracker().isWhiteTurn()) {
+						ChessBoard.setCurrClickedTile(-1, -1);
+					} else if (!ChessBoard.getCurrClicked().isOccupied()) {
 						ChessBoard.setCurrClickedTile(-1, -1);
 					}
-					System.out.println(ChessBoard.getCurrClicked().getPiece().getMoves());
+					
 				} else {
 					System.out.println("hello");
 					Tile t = ChessBoard.getCurrClicked();
 					if (t != Tile.this && isPossibleTile(t.getPiece())) {
 						ChessBoard.movePiece(t.getRowCoord(), t.getColCoord(), rowCoord, colCoord);
 					}
-					//ChessBoard.movePiece(t.getRowCoord(), t.getColCoord(), rowCoord, colCoord);
 					ChessBoard.setCurrClickedTile(-1, -1);
-					//System.out.println(ChessBoard.getCurrClicked() == null);
 				}
 			}
 		});

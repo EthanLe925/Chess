@@ -7,6 +7,9 @@ import javax.swing.*;
 public class ChessBoard{
 	private static Tile[][] board = new Tile[8][8];
 	private static Tile tileCurrClicked = null;
+	private static CaptureTracker myTracker = new CaptureTracker();
+	private static boolean kingCaptured = false;
+	public static String capturedColor;
 	
 	public static void setUpBoard() {
 		
@@ -19,6 +22,10 @@ public class ChessBoard{
 		}
 		
 		
+	}
+	
+	public static CaptureTracker getTracker() {
+		return myTracker;
 	}
 	
 	public static Tile[][] getBoard(){
@@ -54,21 +61,40 @@ public class ChessBoard{
 		
 		JPanel scoreBoard = new JPanel();
 		scoreBoard.setPreferredSize(new Dimension(500, 100));
-		JButton helloButton = new JButton("Hello");
-		helloButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("hi");
-			}
-		});
-		scoreBoard.add(helloButton);
-
-		JFrame frame = new JFrame("Test Frame");
+		
+		JLabel label1 = new JLabel("White Pieces Captured: \n" + myTracker.getWhiteCaptures());
+		label1.setBounds(0, -400, 1000, 1000);
+		
+		JLabel label2 = new JLabel("Black Pieces Captured: \n" + myTracker.getBlackCaptures());
+		label2.setBounds(0, 0, 10000, 1000);
+	
+		scoreBoard.setLayout(null);
+		scoreBoard.add(label1, BorderLayout.NORTH);
+		scoreBoard.add(label2, BorderLayout.SOUTH);
+		
+		JFrame frame = new JFrame("Chess Game");
 		frame.setSize(2000,1000);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE );
 		frame.add(chessBoard);
 		frame.add(scoreBoard, BorderLayout.EAST);
 		
+		
+	}
+	
+	public static void displayWinScreen() {
+		JPanel winScreen = new JPanel();
+		winScreen.setPreferredSize(new Dimension(2000, 2000));
+		
+		JLabel myLabel = new JLabel(capturedColor + " Wins!");
+		
+		winScreen.add(myLabel);
+		
+		JFrame frame = new JFrame("Win Screen");
+		frame.setSize(2000,1000);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE );
+		frame.add(winScreen);
 		
 		
 	}
@@ -79,27 +105,42 @@ public class ChessBoard{
 		Tile initTile = board[initRow][initCol];
 		
 		if (toTile.isOccupied()) {
+			myTracker.addCapture(toTile.getPiece());
+			if (toTile.getPiece().getName().equals("King")) {
+				kingCaptured = true;
+				if (toTile.getPiece().getIsWhite()) {
+					capturedColor = "Black";
+				} else {
+					capturedColor = "White";
+				}
+			}
 			toTile.removePiece();
+			
 		}
 		
 		toTile.addPiece(board[initRow][initCol].getPiece());
 		initTile.removePiece();
+		myTracker.switchTurn();
 		printBoard();
-		displayBoard();
+		if (kingCaptured == true) {
+			displayWinScreen();
+		} else {
+			displayBoard();
+		}
+		
 		toTile.setActions();
 		toTile.getPiece().setRow(toTile.getRowCoord());
 		toTile.getPiece().setCol(toTile.getColCoord());
 		toTile.getPiece().setHasMoved(true);
 		initTile.setActions();
 
+
 	}
 	
 	private static void setBeginningPieces() {
 		
-		for (int col = 0; col < board[0].length; col++) {
-			board[1][col].addPiece(new Pawn(false, 1, col));
-			board[6][col].addPiece(new Pawn(true, 6, col));
-		}	
+		setPawns(1, 7);
+		setPawns(6, 7);
 		
 		board[0][0].addPiece(new Rook(false, 0, 0));
 		board[0][7].addPiece(new Rook(false, 0, 7));
@@ -121,6 +162,23 @@ public class ChessBoard{
 		
 		board[0][4].addPiece(new King(false, 0, 4));
 		board[7][4].addPiece(new King(true, 7, 4));
+	}
+	
+	private static int setPawns(int rowLocation, int firstColLocation) {
+		boolean isWhite = true;
+		if (rowLocation == 1) {
+			isWhite = false;
+		}
+		
+		if (firstColLocation > 0) {
+			board[rowLocation][firstColLocation].addPiece(new Pawn(isWhite, rowLocation, firstColLocation));
+			return setPawns(rowLocation, firstColLocation - 1);
+			
+		} else {
+			board[rowLocation][firstColLocation].addPiece(new Pawn(isWhite, rowLocation, firstColLocation));
+			return 0;
+		}
+		
 	}
 	
 	private static void initializeBoard() {

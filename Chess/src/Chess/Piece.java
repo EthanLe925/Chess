@@ -8,6 +8,7 @@ public class Piece {
 	private int rowCoord;
 	private int colCoord;
 	public boolean hasMoved;
+	public int order;
 	
 	public Piece(String name, boolean isWhite, int rowCoord, int colCoord) {
 		this.name = name;
@@ -55,6 +56,10 @@ public class Piece {
 	
 	public int getCol() {
 		return colCoord;
+	}
+	
+	public int getOrder() {
+		return order;
 	}
 	
 	public ArrayList<Coordinate> getMoves(){
@@ -122,6 +127,10 @@ public class Piece {
 		
 		return result;
 	}
+	
+	public String toString() {
+		return getName();
+	}
 }
 	
 
@@ -129,6 +138,7 @@ class Pawn extends Piece {
 
 	public Pawn(boolean isWhite, int rowCoord, int colCoord) {
 		super("Pawn", isWhite, rowCoord, colCoord);
+		order = 1;
 	}
 	
 	public ArrayList<Coordinate> getMoves(){
@@ -153,12 +163,16 @@ class Pawn extends Piece {
 			result.add(diagonalCoords.get(i));
 		}
 		
-		result.add(new Coordinate(getRow() + 1*colorMultiplier, getCol()));
-			
+		if (!ChessBoard.getBoard()[getRow() + 1 * colorMultiplier][getCol()].isOccupied()) {
+			result.add(new Coordinate(getRow() + 1 * colorMultiplier, getCol()));
+		}
+
 		result = filterCoordinates(result);
 		
 		return result;
 	}
+	
+	
 	
 	public ArrayList<Coordinate> getDiagonalCoords(){
 		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
@@ -184,12 +198,12 @@ class Pawn extends Piece {
 	}
 	
 	
-	
 }
 
 class Knight extends Piece {
 	public Knight(boolean isWhite, int rowCoord, int colCoord) {
 		super("Knight", isWhite, rowCoord, colCoord);
+		order = 2;
 	}
 	
 	public ArrayList<Coordinate> getMoves(){
@@ -214,6 +228,7 @@ class Knight extends Piece {
 class Bishop extends Piece {
 	public Bishop(boolean isWhite, int rowCoord, int colCoord) {
 		super("Bishop", isWhite, rowCoord, colCoord);
+		order = 3;
 	}
 	
 	public ArrayList<Coordinate> getMoves(){
@@ -231,6 +246,7 @@ class Bishop extends Piece {
 class Rook extends Piece {
 	public Rook(boolean isWhite, int rowCoord, int colCoord) {
 		super("Rook", isWhite, rowCoord, colCoord);
+		order = 4;
 	}
 	
 	public ArrayList<Coordinate> getMoves(){
@@ -249,6 +265,7 @@ class Rook extends Piece {
 class Queen extends Piece {
 	public Queen(boolean isWhite, int rowCoord, int colCoord) {
 		super("Queen", isWhite, rowCoord, colCoord);
+		order = 5;
 	}
 	
 	public ArrayList<Coordinate> getMoves(){
@@ -269,6 +286,7 @@ class Queen extends Piece {
 class King extends Piece {
 	public King(boolean isWhite, int rowCoord, int colCoord) {
 		super("King", isWhite, rowCoord, colCoord);
+		order = 6;
 	}
 	public ArrayList<Coordinate> getMoves(){
 		ArrayList<Coordinate> result = new ArrayList<Coordinate>();
