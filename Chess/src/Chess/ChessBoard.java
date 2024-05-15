@@ -4,6 +4,13 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+/**
+ * ChessBoard.java
+ * @author Andy Nguyen, Ethan Le, Pranit Agrawal, Krish Tandon, Ajay Saravanan
+ * @since 5/14/2024
+ * This keeps track of all of the elements of the board, including the tiles, the pieces in the tiles, and the movements.
+ * This class also displays the board and the victory screen.
+ */
 public class ChessBoard{
 	private static Tile[][] board = new Tile[8][8];
 	private static Tile tileCurrClicked = null;
@@ -11,6 +18,14 @@ public class ChessBoard{
 	private static boolean kingCaptured = false;
 	public static String capturedColor;
 	
+
+	/**
+     * Method that calls the methods to fill the board with tiles and fill the board with the pieces in their respective positions
+     * This method also sets the ability for each tile to be clicked.
+     * 
+     * Postcondition: intializes the board, fills the board with tiles and pieces, and allows the button(tiles) to perform their actions
+     * when pressed.
+	 */
 	public static void setUpBoard() {
 		
 		initializeBoard();
@@ -24,28 +39,31 @@ public class ChessBoard{
 		
 	}
 	
+	/**
+     * Method that returns the CaptureTracker initialized in the class
+     * 
+     * @return myTracker - the CaptureTracker that keeps track of captured pieces
+	 */
 	public static CaptureTracker getTracker() {
 		return myTracker;
 	}
 	
+	/**
+     * Method that returns the board of tiles initialized in the class.
+     * 
+     * @return board - the 2D array of Tiles that represent the board and the positions of all of the Tiles and Pieces
+	 */
 	public static Tile[][] getBoard(){
 		return board;
 	}
 	
-	public static void printBoard() {
-		for (int row = 0; row < board.length; row++) {
-			for (int col = 0; col < board.length; col++) {
-				if (board[row][col].isOccupied()) {
-					System.out.print(board[row][col].getPiece().getName());
-				} else {
-					System.out.print("null");
-				}
-			}
-
-			System.out.println();
-		}
-	}
-	
+	/**
+     * Method that sets up the GUI for the chessBoard and sets up the different aspects of the screen.
+     * On the left side of the screen is the actual chess board, which users can click and move the pieces on.
+     * On the right side of the screen is the tracker, which displays all of the captured pieces.
+     * 
+     * Postcondition: The board is displayed 
+	 */
 	public static void displayBoard() {
 		JPanel chessBoard = new JPanel();
 		chessBoard.setPreferredSize(new Dimension(2000, 2000));
@@ -82,6 +100,12 @@ public class ChessBoard{
 		
 	}
 	
+	/**
+     * Method that sets up the GUI for the screen that shows who wins and sets up the different aspects of the screen when 
+     * a King is captured. If the white king is captured, black wins, and vice - versa for white.
+     * 
+     * Postcondition: The victory screen is displayed 
+	 */
 	public static void displayWinScreen() {
 		JPanel winScreen = new JPanel();
 		winScreen.setPreferredSize(new Dimension(2000, 2000));
@@ -99,7 +123,23 @@ public class ChessBoard{
 		
 	}
 	
-	
+	/**
+     * Method moves the piece from initRow and initCol on the 2D array of Tiles and moves it to the tile at toRow and toCol,
+     * removing the piece from its original coordinate and replacing it at the to coordinates.
+     * 
+     * If the tile the piece is moving to is occupied, it will remove the piece at the Tile the current piece is moving to and
+     * add the captured piece to its respective captured list.
+     * 
+     * After moving the pieces, it updates the board and displays it.
+     * 
+     * Postcondition: The piece is moved and the board is displayed again if the king is not captured,
+     * if the king is captured, it calls the method to display the win screen.
+     * @param initRow - the int value of the row the initial piece is at
+     * @param initCol - the int value of the column the initial piece is at
+     * @param toRow - the row that the user wishes to move the piece to
+     * @param toCol - the column that the user wishes to move the piece to
+     * 
+	 */
 	public static void movePiece(int initRow, int initCol, int toRow, int toCol) {
 		Tile toTile = board[toRow][toCol];
 		Tile initTile = board[initRow][initCol];
@@ -121,7 +161,6 @@ public class ChessBoard{
 		toTile.addPiece(board[initRow][initCol].getPiece());
 		initTile.removePiece();
 		myTracker.switchTurn();
-		printBoard();
 		if (kingCaptured == true) {
 			displayWinScreen();
 		} else {
@@ -137,6 +176,11 @@ public class ChessBoard{
 
 	}
 	
+	/**
+     * Method that creates and puts the pieces in their respective starting positions on the board
+     * 
+     * Postcondition: The board is set up with all of the pieces in their correct spots.
+	 */
 	private static void setBeginningPieces() {
 		
 		setPawns(1, 7);
@@ -164,23 +208,39 @@ public class ChessBoard{
 		board[7][4].addPiece(new King(true, 7, 4));
 	}
 	
-	private static int setPawns(int rowLocation, int firstColLocation) {
+	/**
+     * Method that uses recursion to set the line of pawns up on the board.
+     * 
+     * Postcondition: The pawns are set up all in a row in the respective rowLocation.
+     * If the rowLocation is 1, the pawns are all black. Otherwise, the pawns are White.
+     * @param rowLocation - the row that the pawns are going to be set up in
+     * @param firstColLocation - the last column that the pawn is going to appear in
+     * 
+	 */
+	
+	private static int setPawns(int rowLocation, int lastColLocation) {
 		boolean isWhite = true;
 		if (rowLocation == 1) {
 			isWhite = false;
 		}
 		
-		if (firstColLocation > 0) {
-			board[rowLocation][firstColLocation].addPiece(new Pawn(isWhite, rowLocation, firstColLocation));
-			return setPawns(rowLocation, firstColLocation - 1);
+		if (lastColLocation > 0) {
+			board[rowLocation][lastColLocation].addPiece(new Pawn(isWhite, rowLocation, lastColLocation));
+			return setPawns(rowLocation, lastColLocation - 1);
 			
 		} else {
-			board[rowLocation][firstColLocation].addPiece(new Pawn(isWhite, rowLocation, firstColLocation));
+			board[rowLocation][lastColLocation].addPiece(new Pawn(isWhite, rowLocation, lastColLocation));
 			return 0;
 		}
 		
 	}
 	
+	/**
+     * Method that sets up the board with all of its Tiles
+     *
+     * Postcondition: The board has a tile and each tile is alternating color from tile to tile to create a chessBoard pattern
+     * The tiles do not initially have pieces in them.
+	 */
 	private static void initializeBoard() {
 		
 		for (int row = 0; row < board.length; row++) {
@@ -204,6 +264,14 @@ public class ChessBoard{
 		}
 	}
 	
+	/**
+     * Method that sets the variable tileCurrClicked to the tile that is currently clicked
+     * 
+     * Postcondition: sets the currentlyClicked tile to the row and column location. 
+     * If the input row is -1, then it sets the currently clicked tile to null.
+     * @param row - the int value of the row that the currently clicked tile is in
+     * @param col - the int value of the column that the currently clicked tile is in
+	 */
 	public static void setCurrClickedTile(int row, int col) {
 		if (row != -1) {
 			tileCurrClicked = board[row][col];
@@ -213,10 +281,20 @@ public class ChessBoard{
 		
 	}
 	
+	/**
+     * Method that returns whether or not if a tile is currentlyClicked
+     * 
+     * @return true or false - whether or not there is a tile that is currentlyClicked;
+	 */
 	public static boolean tileCurrClicked() {
 		return tileCurrClicked == null;
 	}
 	
+	/**
+     * Method that returns the currently clicked tile
+     * 
+     * @return tileCurrClicked - the currently clicked tile
+	 */
 	public static Tile getCurrClicked() {
 		return tileCurrClicked;
 	}
