@@ -118,7 +118,6 @@ public class CaptureTracker {
 	 */
 	public ArrayList<Piece> sortAlphOrder(ArrayList<Piece> list){
 		ArrayList<Piece> result = list;
-		System.out.println(result);
 		
 		for (int i = 0; i < result.size(); i++) {
 			for (int j = i + 1; j < result.size(); j++) {
@@ -132,7 +131,6 @@ public class CaptureTracker {
 			}
 			
 		}
-		System.out.println(result);
 		return result;
 	}
 	

@@ -64,14 +64,17 @@ public class Tile {
 				if (ChessBoard.getCurrClicked() == null) {
 					ChessBoard.setCurrClickedTile(rowCoord, colCoord);
 					
-					if (ChessBoard.getCurrClicked().isOccupied() && ChessBoard.getCurrClicked().getPiece().getIsWhite() != ChessBoard.getTracker().isWhiteTurn()) {
+					if (!ChessBoard.getTesting() && ChessBoard.getCurrClicked().isOccupied() && ChessBoard.getCurrClicked().getPiece().getIsWhite() != ChessBoard.getTracker().isWhiteTurn()) {
 						ChessBoard.setCurrClickedTile(-1, -1);
 					} else if (!ChessBoard.getCurrClicked().isOccupied()) {
 						ChessBoard.setCurrClickedTile(-1, -1);
 					}
 					
+					if(ChessBoard.getTesting()) {
+						ChessBoard.displayBoard();
+					}
+					
 				} else {
-					System.out.println("hello");
 					Tile t = ChessBoard.getCurrClicked();
 					if (t != Tile.this && isPossibleTile(t.getPiece())) {
 						ChessBoard.movePiece(t.getRowCoord(), t.getColCoord(), rowCoord, colCoord);

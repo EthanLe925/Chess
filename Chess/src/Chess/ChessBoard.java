@@ -17,6 +17,7 @@ public class ChessBoard{
 	private static CaptureTracker myTracker = new CaptureTracker();
 	private static boolean kingCaptured = false;
 	public static String capturedColor;
+	private static boolean isTesting = false;
 	
 
 	/**
@@ -81,14 +82,28 @@ public class ChessBoard{
 		scoreBoard.setPreferredSize(new Dimension(500, 100));
 		
 		JLabel label1 = new JLabel("White Pieces Captured: \n" + myTracker.getWhiteCaptures());
-		label1.setBounds(0, -400, 1000, 1000);
+		label1.setBounds(0, -480, 1000, 1000);
 		
 		JLabel label2 = new JLabel("Black Pieces Captured: \n" + myTracker.getBlackCaptures());
-		label2.setBounds(0, 0, 10000, 1000);
-	
+		label2.setBounds(0, -300, 10000, 1000);
+		
 		scoreBoard.setLayout(null);
 		scoreBoard.add(label1, BorderLayout.NORTH);
 		scoreBoard.add(label2, BorderLayout.SOUTH);
+		
+		if (isTesting) {
+			JLabel currMoves;
+			if (tileCurrClicked != null && tileCurrClicked.isOccupied()) {
+				currMoves = new JLabel("Possible Moves: " + tileCurrClicked.getPiece().getMoves());
+				currMoves.setBounds(0, 0, 1000, 1000);
+			} else {
+				currMoves = new JLabel("Possible Moves: ");
+				currMoves.setBounds(0, 0, 1000, 1000);
+			}
+			
+			scoreBoard.add(currMoves);
+		}
+	
 		
 		JFrame frame = new JFrame("Chess Game");
 		frame.setSize(2000,1000);
@@ -297,6 +312,25 @@ public class ChessBoard{
 	 */
 	public static Tile getCurrClicked() {
 		return tileCurrClicked;
+	}
+	
+	/**
+     * Method that sets whether or not the game is a test game or not
+     * 
+     * Postcondition: isTesting is set to the parameter
+     * @param isTest - the boolean variable that sets whether or not the game is in testing mode
+	 */
+	public static void setTesting(boolean isTest) {
+		isTesting = isTest;
+	}
+	
+	/**
+     * Method that returns whether or not the game is a test game or not
+     * 
+     * @return isTesting - the boolean variable of whether or not the game is currently being tested
+	 */
+	public static boolean getTesting() {
+		return isTesting;
 	}
 	
 	
